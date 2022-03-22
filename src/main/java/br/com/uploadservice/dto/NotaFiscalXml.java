@@ -29,7 +29,7 @@ public class NotaFiscalXml {
 	@AllArgsConstructor
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	private static class ElementXml {
+	public static class ElementXml {
 		
 		private String chave;
 		
@@ -55,7 +55,7 @@ public class NotaFiscalXml {
 	@AllArgsConstructor
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	private static class DuplicataXml {
+	public static class DuplicataXml {
 
 		private Date dataVencimento;
 		

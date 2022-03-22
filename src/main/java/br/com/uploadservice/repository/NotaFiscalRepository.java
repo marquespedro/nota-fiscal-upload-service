@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import br.com.uploadservice.model.NotaFiscal;
 
 @Repository
-public interface FileRepository extends JpaRepository<NotaFiscal, Integer>{
+public interface NotaFiscalRepository extends JpaRepository<NotaFiscal, Integer> {
 
 }

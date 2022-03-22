@@ -1,7 +1,7 @@
 package br.com.uploadservice.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -20,6 +21,7 @@ import lombok.ToString;
 @Entity
 @Data
 @ToString
+@Builder
 public class NotaFiscal {
 
 	@Id
@@ -31,7 +33,7 @@ public class NotaFiscal {
 	private String numero;
 	
 	@Column(name="dh_registro")
-	private LocalDateTime dhRegistro;
+	private Date dhRegistro;
 	
 	@Column(name="nome_emitente")
 	private String nomeEmitente;

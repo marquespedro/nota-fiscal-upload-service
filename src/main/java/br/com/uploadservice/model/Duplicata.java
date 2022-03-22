@@ -1,7 +1,7 @@
 package br.com.uploadservice.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -19,6 +20,7 @@ import lombok.ToString;
 @Entity
 @Data
 @ToString
+@Builder
 public class Duplicata {
 
 	@Id
@@ -32,7 +34,7 @@ public class Duplicata {
 	private BigDecimal valor;
 	
 	@Column(name = "data_vencimento")
-	private LocalDate dataVencimento;
+	private Date dataVencimento;
 	
 	@JoinColumn(name = "nota_fiscal_id")
 	@ManyToOne(fetch = FetchType.LAZY)

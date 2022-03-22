@@ -1,10 +1,9 @@
 package br.com.uploadservice;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 @SpringBootApplication(scanBasePackages = {"br.com.uploadservice"})
 public class UploadServiceApplication {
@@ -13,12 +12,10 @@ public class UploadServiceApplication {
 		SpringApplication.run(UploadServiceApplication.class, args);
 	}
 
-	
-	@Bean
-	public XmlMapper xmlMapper() {
 
-		XmlMapper mapper = new XmlMapper();
-		
-		return mapper;
+	@Bean
+	public ModelMapper modelMapper() {
+		ModelMapper modelMapper = new ModelMapper();	
+		return modelMapper;
 	}
 }
