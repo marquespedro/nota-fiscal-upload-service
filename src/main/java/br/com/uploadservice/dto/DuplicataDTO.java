@@ -3,18 +3,15 @@ package br.com.uploadservice.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
+@ToString(of = { "id", "valor" })
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(of = {"id" , "valor"})
-@JsonIgnoreProperties(value = {"notaFiscal"})
 public class DuplicataDTO {
 
 	private Integer id;
@@ -24,6 +21,5 @@ public class DuplicataDTO {
 	private BigDecimal valor;
 
 	private Date dataVencimento;
-
 
 }

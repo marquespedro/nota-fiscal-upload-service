@@ -1,132 +1,26 @@
 package br.com.uploadservice.service;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-
-import br.com.uploadservice.converters.NotaFiscalMapper;
+import br.com.uploadservice.converter.NotaFiscalMapper;
 import br.com.uploadservice.dto.NotaFiscalDTO;
-import br.com.uploadservice.dto.NotaFiscalXml;
-import br.com.uploadservice.dto.NotaFiscalXml.DuplicataXml;
-import br.com.uploadservice.dto.NotaFiscalXml.ElementXml;
-import br.com.uploadservice.exceptions.ConverterArquivoNotaFiscalException;
-import br.com.uploadservice.exceptions.ImportarArquivoException;
-import br.com.uploadservice.model.Duplicata;
 import br.com.uploadservice.model.NotaFiscal;
-import br.com.uploadservice.model.StatusProcessamento;
-import br.com.uploadservice.repository.NotaFiscalRepositoryCustom;
+import br.com.uploadservice.repository.NotaFiscalRepository;
 
 @Service
 public class NotaFiscalService {
 
 	@Autowired
-	private NotaFiscalRepositoryCustom repository;
+	private NotaFiscalRepository notaFiscalRepository;
 
 	@Autowired
 	private NotaFiscalMapper mapper;
-
-	@Value("${upload-service.path.input}")
-	private String propInputArquivos;
-
-	@Transactional
-	public NotaFiscalDTO salvar(MultipartFile file) throws IOException {
-
-		validarArquivo(file);
-
-		NotaFiscalXml notaFiscalXml = converterXmlParaNotaFiscalXml(file);
-		NotaFiscal notaFiscal = montarNotaFiscal(notaFiscalXml, file.getOriginalFilename());
-
-		repository.salvar(notaFiscal);
-
-		importarXmlNotaFiscal(file);
-
-		return mapper.converter(notaFiscal);
-	}
-
-	private void validarArquivo(MultipartFile file) {
-
-		if (Objects.isNull(file)) {
-			throw new IllegalArgumentException("Verifique se foi anexado um arquivo com o nome de parâmetro (file)");
-		}
-
-	}
-
-	/**
-	 * Escreve o arquivo no diretorio input
-	 * 
-	 * @param file
-	 */
-	public void importarXmlNotaFiscal(MultipartFile file) {
-
-		String home = System.getProperty("user.home");
-		String diretorioInput = home + this.propInputArquivos.concat("/");
-
-		Path path = Paths.get(diretorioInput);
-		if (!Files.exists(path)) {
-			new File(diretorioInput).mkdirs();
-		}
-
-		try (FileOutputStream outputStream = new FileOutputStream(diretorioInput.concat(file.getOriginalFilename()))) {
-			byte[] bytesArquivo = file.getBytes();
-			outputStream.write(bytesArquivo);
-		} catch (IOException e) {
-			throw new ImportarArquivoException(e.getMessage());
-		}
-
-	}
-
-	private NotaFiscal montarNotaFiscal(NotaFiscalXml notaFiscalXml, String nomeArquivo) {
-
-		ElementXml elementXml = notaFiscalXml.getElement();
-
-		NotaFiscal nota = NotaFiscal.builder().numero(elementXml.getChave())
-				.status(StatusProcessamento.AGUARDANDO_PROCESSAMENTO).dhRegistro(elementXml.getDataHoraRegistro())
-				.nomeEmitente(elementXml.getNomeEmitente()).nomeDestinatario(elementXml.getNomeDestinatario())
-				.valorNota(elementXml.getValor()).duplicatas(montarDuplicatas(elementXml.getDuplicatas()))
-				.nomeArquivo(nomeArquivo).build();
-
-		return nota;
-	}
-
-	private List<Duplicata> montarDuplicatas(List<DuplicataXml> duplicatasXml) {
-
-		Stream<Duplicata> duplicatas = duplicatasXml.stream().map(d -> {
-
-			return Duplicata.builder().dataVencimento(d.getDataVencimento()).valor(d.getValorParcela())
-					.parcela(d.getNumeroParcela()).build();
-		});
-
-		return duplicatas.collect(Collectors.toList());
-	}
-
-	private NotaFiscalXml converterXmlParaNotaFiscalXml(MultipartFile file) {
-		XmlMapper mapper = new XmlMapper();
-		NotaFiscalXml notaFiscalXml = null;
-
-		try {
-
-			notaFiscalXml = mapper.readValue(new String(file.getBytes()), NotaFiscalXml.class);
-
-		} catch (IOException e) {
-
-			throw new ConverterArquivoNotaFiscalException(e.getMessage());
-		}
-
-		return notaFiscalXml;
+	
+	public List<NotaFiscalDTO> listar() {
+		List<NotaFiscal> entidades = notaFiscalRepository.listar();
+		return mapper.converter(entidades);
 	}
 }

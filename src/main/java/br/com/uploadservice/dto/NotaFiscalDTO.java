@@ -1,7 +1,7 @@
 package br.com.uploadservice.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import br.com.uploadservice.model.StatusProcessamento;
@@ -11,24 +11,24 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
-@ToString(of = {"id", "numero" , "nomeArquivo"})
+@ToString(of = {"id", "numero"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class NotaFiscalDTO {
-	
+
 	private Integer id;
 
 	private String numero;
-	
-	private String nomeArquivo;
 
-	private LocalDateTime dhRegistro;
+	private Date dhRegistro;
 
 	private String nomeEmitente;
 
 	private String nomeDestinatario;
 
 	private BigDecimal valorNota;
+
+	private String nomeArquivo;
 
 	private StatusProcessamento status;
 
