@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @JacksonXmlRootElement(localName = "root")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -29,6 +30,7 @@ public class NotaFiscalXml {
 	@AllArgsConstructor
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
+	@ToString(of = {"chave"})
 	public static class ElementXml {
 		
 		private String chave;
@@ -55,6 +57,7 @@ public class NotaFiscalXml {
 	@AllArgsConstructor
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
+	@ToString(of = {"valorParcela" ,"numeroParcela"})
 	public static class DuplicataXml {
 
 		private Date dataVencimento;

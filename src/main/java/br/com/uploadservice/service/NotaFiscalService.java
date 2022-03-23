@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
+import br.com.uploadservice.converters.NotaFiscalMapper;
 import br.com.uploadservice.dto.NotaFiscalDTO;
 import br.com.uploadservice.dto.NotaFiscalXml;
 import br.com.uploadservice.dto.NotaFiscalXml.DuplicataXml;
@@ -38,32 +38,32 @@ public class NotaFiscalService {
 	private NotaFiscalRepositoryCustom repository;
 
 	@Autowired
-	private ModelMapper modelMapper;
-	
+	private NotaFiscalMapper mapper;
+
 	@Value("${upload-service.path.input}")
 	private String propInputArquivos;
-	
+
 	@Transactional
 	public NotaFiscalDTO salvar(MultipartFile file) throws IOException {
 
 		validarArquivo(file);
-		
+
 		NotaFiscalXml notaFiscalXml = converterXmlParaNotaFiscalXml(file);
-		NotaFiscal notaFiscal = montarNotaFiscal(notaFiscalXml);
+		NotaFiscal notaFiscal = montarNotaFiscal(notaFiscalXml, file.getOriginalFilename());
 
 		repository.salvar(notaFiscal);
 
 		importarXmlNotaFiscal(file);
 
-		return modelMapper.map(notaFiscal, NotaFiscalDTO.class);
+		return mapper.converter(notaFiscal);
 	}
 
 	private void validarArquivo(MultipartFile file) {
-		
-		if(Objects.isNull(file)) {
+
+		if (Objects.isNull(file)) {
 			throw new IllegalArgumentException("Verifique se foi anexado um arquivo com o nome de parâmetro (file)");
 		}
-		
+
 	}
 
 	/**
@@ -77,10 +77,10 @@ public class NotaFiscalService {
 		String diretorioInput = home + this.propInputArquivos.concat("/");
 
 		Path path = Paths.get(diretorioInput);
-		if(!Files.exists(path)) {
+		if (!Files.exists(path)) {
 			new File(diretorioInput).mkdirs();
 		}
-		
+
 		try (FileOutputStream outputStream = new FileOutputStream(diretorioInput.concat(file.getOriginalFilename()))) {
 			byte[] bytesArquivo = file.getBytes();
 			outputStream.write(bytesArquivo);
@@ -90,14 +90,15 @@ public class NotaFiscalService {
 
 	}
 
-	private NotaFiscal montarNotaFiscal(NotaFiscalXml notaFiscalXml) {
+	private NotaFiscal montarNotaFiscal(NotaFiscalXml notaFiscalXml, String nomeArquivo) {
 
 		ElementXml elementXml = notaFiscalXml.getElement();
 
 		NotaFiscal nota = NotaFiscal.builder().numero(elementXml.getChave())
 				.status(StatusProcessamento.AGUARDANDO_PROCESSAMENTO).dhRegistro(elementXml.getDataHoraRegistro())
 				.nomeEmitente(elementXml.getNomeEmitente()).nomeDestinatario(elementXml.getNomeDestinatario())
-				.valorNota(elementXml.getValor()).duplicatas(montarDuplicatas(elementXml.getDuplicatas())).build();
+				.valorNota(elementXml.getValor()).duplicatas(montarDuplicatas(elementXml.getDuplicatas()))
+				.nomeArquivo(nomeArquivo).build();
 
 		return nota;
 	}
@@ -112,20 +113,20 @@ public class NotaFiscalService {
 
 		return duplicatas.collect(Collectors.toList());
 	}
-	
-	private NotaFiscalXml converterXmlParaNotaFiscalXml(MultipartFile file)  {
+
+	private NotaFiscalXml converterXmlParaNotaFiscalXml(MultipartFile file) {
 		XmlMapper mapper = new XmlMapper();
 		NotaFiscalXml notaFiscalXml = null;
-		
+
 		try {
-			
-			notaFiscalXml =  mapper.readValue(new String(file.getBytes()), NotaFiscalXml.class);
-		
+
+			notaFiscalXml = mapper.readValue(new String(file.getBytes()), NotaFiscalXml.class);
+
 		} catch (IOException e) {
-		
+
 			throw new ConverterArquivoNotaFiscalException(e.getMessage());
 		}
-		
+
 		return notaFiscalXml;
 	}
 }

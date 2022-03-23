@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
-@ToString(of = {"id", "numero"})
+@ToString(of = {"id", "numero" , "nomeArquivo"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class NotaFiscalDTO {
@@ -19,6 +19,8 @@ public class NotaFiscalDTO {
 	private Integer id;
 
 	private String numero;
+	
+	private String nomeArquivo;
 
 	private LocalDateTime dhRegistro;
 
@@ -26,7 +28,7 @@ public class NotaFiscalDTO {
 
 	private String nomeDestinatario;
 
-	private BigDecimal valor;
+	private BigDecimal valorNota;
 
 	private StatusProcessamento status;
 
