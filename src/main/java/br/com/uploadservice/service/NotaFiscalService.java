@@ -7,9 +7,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
+import br.com.uploadservice.dto.NotaFiscalDTO;
 import br.com.uploadservice.dto.NotaFiscalXml;
 import br.com.uploadservice.dto.NotaFiscalXml.DuplicataXml;
 import br.com.uploadservice.dto.NotaFiscalXml.ElementXml;
@@ -34,12 +37,17 @@ public class NotaFiscalService {
 	@Autowired
 	private NotaFiscalRepositoryCustom repository;
 
+	@Autowired
+	private ModelMapper modelMapper;
+	
 	@Value("${upload-service.path.input}")
-	private String inputArquivos;
+	private String propInputArquivos;
 	
 	@Transactional
-	public NotaFiscal salvar(MultipartFile file) throws IOException {
+	public NotaFiscalDTO salvar(MultipartFile file) throws IOException {
 
+		validarArquivo(file);
+		
 		NotaFiscalXml notaFiscalXml = converterXmlParaNotaFiscalXml(file);
 		NotaFiscal notaFiscal = montarNotaFiscal(notaFiscalXml);
 
@@ -47,7 +55,15 @@ public class NotaFiscalService {
 
 		importarXmlNotaFiscal(file);
 
-		return notaFiscal;
+		return modelMapper.map(notaFiscal, NotaFiscalDTO.class);
+	}
+
+	private void validarArquivo(MultipartFile file) {
+		
+		if(Objects.isNull(file)) {
+			throw new IllegalArgumentException("Verifique se foi anexado um arquivo com o nome de parâmetro (file)");
+		}
+		
 	}
 
 	/**
@@ -58,7 +74,7 @@ public class NotaFiscalService {
 	public void importarXmlNotaFiscal(MultipartFile file) {
 
 		String home = System.getProperty("user.home");
-		String diretorioInput = home + this.inputArquivos.concat("/");
+		String diretorioInput = home + this.propInputArquivos.concat("/");
 
 		Path path = Paths.get(diretorioInput);
 		if(!Files.exists(path)) {

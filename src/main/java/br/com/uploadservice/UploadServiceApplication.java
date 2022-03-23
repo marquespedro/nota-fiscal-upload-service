@@ -18,4 +18,5 @@ public class UploadServiceApplication {
 		ModelMapper modelMapper = new ModelMapper();	
 		return modelMapper;
 	}
+
 }

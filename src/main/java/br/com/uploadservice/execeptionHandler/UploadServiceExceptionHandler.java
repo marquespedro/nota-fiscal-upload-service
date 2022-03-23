@@ -34,4 +34,13 @@ public class UploadServiceExceptionHandler  extends ResponseEntityExceptionHandl
 		Erro erro = new Erro(msg, ex.toString());
 		return handleExceptionInternal(ex, erro, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
+	
+	@ExceptionHandler({ IllegalArgumentException.class })
+	public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+		String msg = messageSource.getMessage("erro.arquivo.nulo", null, LocaleContextHolder.getLocale());
+		Erro erro = new Erro(msg, ex.toString());
+		return handleExceptionInternal(ex, erro, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+	}
+	
+	
 }
