@@ -6,7 +6,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -24,14 +23,5 @@ public class UploadServiceExceptionHandler  extends ResponseEntityExceptionHandl
 		String msg = messageSource.getMessage("erro.arquivo.nulo", null, LocaleContextHolder.getLocale());
 		Erro erro = new Erro(msg, ex.toString());
 		return handleExceptionInternal(ex, erro, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
-	}
-	
-	@Override
-	protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex,
-			HttpHeaders headers, HttpStatus status, WebRequest request) {
-		String msg = messageSource.getMessage("tipo.midia.invalido", null, LocaleContextHolder.getLocale());
-		Erro erro = new Erro(msg, ex.toString());
-		return handleExceptionInternal(ex, erro, new HttpHeaders(), HttpStatus.UNSUPPORTED_MEDIA_TYPE, request);
-	}
-	
+	}	
 }

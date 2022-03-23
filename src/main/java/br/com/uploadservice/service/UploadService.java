@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import br.com.uploadservice.exceptions.ImportarArquivoException;
-
 @Service
 public class UploadService {
 
@@ -21,18 +19,19 @@ public class UploadService {
 	private String propInputArquivos;
 
 	public void upload(MultipartFile file) throws IOException {
-
+		
 		validarArquivo(file);
 		
-		importarXmlNotaFiscal(file);
+		importarArquivo(file);
 	}
 
 	/**
-	 * Escreve o arquivo no diretorio input
+	 * Escreve o arquivo no diretorio input definido nas properties do projeto
 	 * 
 	 * @param file
+	 * @throws IOException 
 	 */
-	private void importarXmlNotaFiscal(MultipartFile file) {
+	private void importarArquivo(MultipartFile file) throws IOException {
 
 		String home = System.getProperty("user.home");
 		
@@ -43,16 +42,17 @@ public class UploadService {
 		if (!Files.exists(path)) {
 			new File(caminhoEntrada).mkdirs();
 		}
-
-		try (FileOutputStream outputStream = new FileOutputStream(caminhoEntrada.concat(file.getOriginalFilename()))) {
-			byte[] bytesArquivo = file.getBytes();
-			outputStream.write(bytesArquivo);
-		} catch (IOException e) {
-			throw new ImportarArquivoException(e.getMessage());
-		}
-
+		
+		FileOutputStream out = new FileOutputStream(caminhoEntrada.concat(file.getOriginalFilename()));
+		byte[] bytesArquivo = file.getBytes();
+		out.write(bytesArquivo);
+		out.close();
 	}
 	
+	/**
+	 * Valida arquivo diferente de nulo e possui extensao xml
+	 * @param file
+	 */
 	private void validarArquivo(MultipartFile file)  {
 
 		if (Objects.isNull(file)) {
