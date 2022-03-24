@@ -25,5 +25,11 @@ public class UploadServiceExceptionHandler  extends ResponseEntityExceptionHandl
 		return handleExceptionInternal(ex, erro, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
 	
+	@ExceptionHandler({ EntidadeNaoEncontradaException.class })
+	public ResponseEntity<Object> handleEntidadeNaoEncontradaException(EntidadeNaoEncontradaException ex, WebRequest request) {
+		String msg = messageSource.getMessage("entidade.nao.existe", null, LocaleContextHolder.getLocale());
+		Erro erro = new Erro(msg, ex.toString());
+		return handleExceptionInternal(ex, erro, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+	}
 	
 }
