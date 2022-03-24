@@ -1,4 +1,4 @@
-package br.com.uploadservice.execeptionHandler;
+package br.com.uploadservice.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

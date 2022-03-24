@@ -39,7 +39,7 @@ public class NotasResource {
 	}
 	
 	@GetMapping
-	public ResponseEntity<?> listar() throws IOException {
+	public ResponseEntity<List<NotaFiscalDTO>> listar() throws IOException {
 
 		List<NotaFiscalDTO> notas =  notaFiscalService.listar();
 

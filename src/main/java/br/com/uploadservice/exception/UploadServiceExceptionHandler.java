@@ -1,4 +1,4 @@
-package br.com.uploadservice.execeptionHandler;
+package br.com.uploadservice.exception;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -23,5 +23,7 @@ public class UploadServiceExceptionHandler  extends ResponseEntityExceptionHandl
 		String msg = messageSource.getMessage("erro.arquivo.nulo", null, LocaleContextHolder.getLocale());
 		Erro erro = new Erro(msg, ex.toString());
 		return handleExceptionInternal(ex, erro, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
-	}	
+	}
+	
+	
 }

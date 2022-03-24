@@ -4,8 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -20,9 +21,29 @@ public class UploadService {
 
 	public void upload(MultipartFile file) throws IOException {
 		
+		criarDiretorios();
+		
 		validarArquivo(file);
 		
 		importarArquivo(file);
+	}
+
+	private void criarDiretorios() {
+		
+		String homeUsuario = System.getProperty("user.home");
+			
+		List<String> paths = Arrays.asList(homeUsuario.concat("/notas/input"), 
+								     homeUsuario.concat("/notas/output"),
+								     homeUsuario.concat("/notas/error"));	
+		
+		
+		paths.stream().forEach(p -> {
+			 if(!Files.exists(Paths.get(p))) {
+				new File(p).mkdirs();
+			 }
+		});
+
+	
 	}
 
 	/**
@@ -36,13 +57,7 @@ public class UploadService {
 		String home = System.getProperty("user.home");
 		
 		String caminhoEntrada = home + this.propInputArquivos.concat("/");
-
-		Path path = Paths.get(caminhoEntrada);
-		
-		if (!Files.exists(path)) {
-			new File(caminhoEntrada).mkdirs();
-		}
-		
+	
 		FileOutputStream out = new FileOutputStream(caminhoEntrada.concat(file.getOriginalFilename()));
 		byte[] bytesArquivo = file.getBytes();
 		out.write(bytesArquivo);
