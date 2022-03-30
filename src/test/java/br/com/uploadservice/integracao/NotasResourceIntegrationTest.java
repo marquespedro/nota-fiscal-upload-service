@@ -1,6 +1,7 @@
 package br.com.uploadservice.integracao;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -43,7 +44,15 @@ public class NotasResourceIntegrationTest {
 				      .contentType(MediaType.APPLICATION_JSON))
 				      .andExpect(status().isOk())
 				      .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-				      .andExpect(jsonPath("$[0].numero", is("35180706225746000422550010000106141999893856")));
+				      .andExpect(jsonPath("$[0].id", is(1)))
+				      .andExpect(jsonPath("$[0].numero", is("101011111212")));
+	}
+	
+	@Test
+	public void deveDeleterNotas() throws Exception {
+		   mvc.perform(delete("/notas-fiscais/2")
+				      .contentType(MediaType.APPLICATION_JSON))
+				      .andExpect(status().isNoContent());
 	}
 	
 }
