@@ -19,4 +19,5 @@ public class UploadServiceApplication {
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper;
 	}
+	
 }
