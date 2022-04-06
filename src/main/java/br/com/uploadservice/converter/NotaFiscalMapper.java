@@ -11,6 +11,6 @@ import br.com.uploadservice.model.NotaFiscal;
 public interface NotaFiscalMapper {
 
 	List<NotaFiscalDTO> converter(List<NotaFiscal> notas);
-	
-	NotaFiscalDTO converter(NotaFiscal nota);
+
+	NotaFiscalDTO converter(NotaFiscal nota);  
 }

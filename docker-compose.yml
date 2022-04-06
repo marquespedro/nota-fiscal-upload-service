@@ -2,14 +2,14 @@ version: "3.1"
 
 services:
 
-#  upload-service-app:
-#    image: nota-fiscal-upload-service
-#    ports: 
-#      - "8080:8080"
-#    networks:
-#      - nota-fiscal-app-network
-#    depends_on: 
-#      - mysqlserveerdb
+  upload-service-app:
+    image: nota-fiscal-upload-service
+    ports: 
+      - "8080:8080"
+    networks:
+      - nota-fiscal-app-network
+    depends_on: 
+      - mysqlserveerdb
       
   mysqlserveerdb:
     image: mysql
