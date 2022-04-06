@@ -1,7 +1,16 @@
-# Use root/example as user/password credentials
 version: "3.1"
 
 services:
+
+#  upload-service-app:
+#    image: nota-fiscal-upload-service
+#    ports: 
+#      - "8080:8080"
+#    networks:
+#      - nota-fiscal-app-network
+#    depends_on: 
+#      - mysqlserveerdb
+      
   mysqlserveerdb:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
@@ -12,8 +21,8 @@ services:
     ports:
       - "3306:3306"
     networks:
-      - mysql-compose-network
-
+      - nota-fiscal-app-network
+  
 networks:
-  mysql-compose-network:
-    driver: bridge
+  nota-fiscal-app-network:
+    driver: 'bridge'
